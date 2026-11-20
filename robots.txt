@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://devmilanian.github.io/sitemap.xml
