@@ -44,7 +44,10 @@ function textWithLinks(value) {
   return result + escape(value.slice(cursor));
 }
 const studio = escape(config.studioName);
-const base = '/studio/orbinit/';
+const mascot = '/assets/smurp-mascot.webp';
+const studioIntro = `<header class="page-intro studio-intro"><div><h1>${studio}</h1><p class="lede">Games and support.</p></div><img src="${mascot}" width="384" height="384" alt=""></header>`;
+const studioRoute = '/smurp-games/';
+const base = `${studioRoute}orbinit/`;
 const support = `${base}support/`;
 const privacy = `${base}privacy-policy/`;
 const updated = new Intl.DateTimeFormat('en-US', {dateStyle:'long', timeZone:'UTC'}).format(new Date(`${policy.updated}T00:00:00Z`));
@@ -59,15 +62,15 @@ function page(route, title, description, body) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escape(title)} · ${studio}</title>
+  <title>${title ? `${escape(title)} · ${studio}` : studio}</title>
   <meta name="description" content="${escape(description)}">
-  ${release ? '' : '<meta name="robots" content="noindex, nofollow">'}
-  <link rel="canonical" href="${site.origin}${route}">
+${release ? '' : '  <meta name="robots" content="noindex, nofollow">\n'}  <link rel="canonical" href="${site.origin}${route}">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/smurp-favicon.png">
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/studio/">${studio}</a><nav aria-label="Main navigation">${links}</nav></div></header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="${studioRoute}"><img src="${mascot}" width="36" height="36" alt="">${studio}</a><nav aria-label="Main navigation">${links}</nav></div></header>
   <main id="main">${draftNotice}${body}</main>
   <footer class="site-footer"><div class="footer-inner"><p class="fine-print">© ${policy.updated.slice(0,4)} ${studio}</p><nav aria-label="Footer navigation">${links}</nav></div></footer>
 </body>
@@ -88,9 +91,9 @@ const policyBody = `<header class="page-intro"><p class="eyebrow"><a href="${bas
 ${policy.sections.map(s => `<section class="policy-section" id="${s.id}"><h2>${escape(s.title)}</h2>${s.paragraphs.map(p => `<p>${textWithLinks(p)}</p>`).join('')}</section>`).join('\n')}
 <aside class="contact-box" aria-label="Contact"><h2>Need help?</h2><p><a href="${support}">Visit Orbinit support</a> for help and privacy requests.</p></aside>`;
 const pages = [
-  ['/', 'Home', 'Apps and support from Studio.', `<header class="page-intro"><h1>${studio}</h1><p>Apps and support.</p></header><ul class="link-list"><li><a href="/studio/">Studio</a></li><li><a href="${base}">Orbinit</a><p><a href="${privacy}">Privacy policy</a> · <a href="${support}">Support</a></p></li></ul>`],
-  ['/studio/', 'Studio', 'Apps and support from Studio.', `<header class="page-intro"><h1>${studio}</h1></header><ul class="link-list"><li><a href="${base}">Orbinit</a><p>A color-matching rolling puzzle game.</p></li></ul>`],
-  [base, 'Orbinit', 'Privacy information and support for Orbinit.', `<header class="page-intro"><p class="eyebrow"><a href="/studio/">${studio}</a></p><h1>Orbinit</h1><p class="lede">A color-matching rolling puzzle game.</p></header><ul class="link-list"><li><a href="${privacy}">Privacy policy</a><p>How game information, purchases, ads, and replay sharing work.</p></li><li><a href="${support}">Support</a><p>Help with purchases, controls, ads, and Daily replays.</p></li></ul>`],
+  ['/', null, `Games and support from ${config.studioName}.`, `${studioIntro}<ul class="link-list"><li><a href="${base}">Orbinit</a><p><a href="${privacy}">Privacy policy</a> · <a href="${support}">Support</a></p></li></ul>`],
+  [studioRoute, null, `Games and support from ${config.studioName}.`, `${studioIntro}<ul class="link-list"><li><a href="${base}">Orbinit</a><p>A color-matching rolling puzzle game.</p></li></ul>`],
+  [base, 'Orbinit', 'Privacy information and support for Orbinit.', `<header class="page-intro"><p class="eyebrow"><a href="${studioRoute}">${studio}</a></p><h1>Orbinit</h1><p class="lede">A color-matching rolling puzzle game.</p></header><ul class="link-list"><li><a href="${privacy}">Privacy policy</a><p>How game information, purchases, ads, and replay sharing work.</p></li><li><a href="${support}">Support</a><p>Help with purchases, controls, ads, and Daily replays.</p></li></ul>`],
   [privacy, 'Orbinit privacy policy', 'How Orbinit uses information for gameplay, purchases, advertising, and Daily replays.', policyBody],
   [support, 'Orbinit support', 'Get help with Orbinit purchases, controls, advertising, and Daily replay sharing.', `<header class="page-intro"><p class="eyebrow"><a href="${base}">Orbinit</a></p><h1>Support</h1><p class="lede">Help with the game and your privacy choices.</p></header><section class="contact-box" aria-labelledby="contact-heading"><h2 id="contact-heading">Contact support</h2>${contact}</section><h2>Common questions</h2>${faq.map(([id,title,body]) => `<section class="faq-section" id="${id}"><h3>${escape(title)}</h3>${body}</section>`).join('\n')}<p class="fine-print" style="margin-top:2rem">Read the <a href="${privacy}">privacy policy</a> for more about information used by Orbinit.</p>`],
 ];
@@ -98,6 +101,25 @@ for (const [route,title,description,body] of pages) {
   const directory = path.join(root, route.slice(1));
   await mkdir(directory, {recursive:true});
   await writeFile(path.join(directory, 'index.html'), page(route,title,description,body));
+}
+for (const [route] of pages.slice(1)) {
+  const legacyRoute = route.replace(studioRoute, '/studio/');
+  const directory = path.join(root, legacyRoute.slice(1));
+  await mkdir(directory, {recursive:true});
+  await writeFile(path.join(directory, 'index.html'), `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page moved · ${studio}</title>
+  <link rel="canonical" href="${site.origin}${route}">
+  <meta http-equiv="refresh" content="0; url=${route}">
+</head>
+<body>
+  <p>This page has moved. <a href="${route}">Continue to the new address</a>.</p>
+</body>
+</html>
+`);
 }
 await writeFile(path.join(root, '.nojekyll'), '');
 await writeFile(path.join(root, 'app-ads.txt'), 'google.com, pub-7613781603537491, DIRECT, f08c47fec0942fa0\n');
