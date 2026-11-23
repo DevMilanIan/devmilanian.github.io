@@ -1,11 +1,12 @@
 :root {
   color-scheme: light;
-  --ink: #1e2934;
+  --ink: #29152e;
   --muted: #4b5967;
-  --link: #1456a0;
+  --link: #633276;
   --line: #d8dfe6;
   --paper: #fff;
-  --wash: #f6f8fa;
+  --smurp-green: #c5fa12;
+  --wash: #f9f6fa;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.65;
   color: var(--ink);
@@ -15,14 +16,14 @@
 body { margin: 0; }
 a { color: var(--link); text-underline-offset: .18em; overflow-wrap: anywhere; }
 a:hover { text-decoration-thickness: 2px; }
-a:focus-visible { outline: 3px solid #1456a0; outline-offset: 4px; border-radius: 2px; }
+a:focus-visible { outline: 3px solid var(--link); outline-offset: 4px; border-radius: 2px; }
 .skip-link { position: absolute; z-index: 2; top: .5rem; left: .75rem; padding: .65rem 1rem; background: white; transform: translateY(-160%); }
 .skip-link:focus { transform: translateY(0); }
 .site-header, .site-footer { background: var(--wash); }
 .site-header { border-bottom: 1px solid var(--line); }
 .header-inner, .footer-inner { max-width: 72rem; margin: auto; padding: 1rem 1.5rem; }
 .header-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem 2rem; }
-.brand { font-size: 1.15rem; font-weight: 700; color: var(--ink); text-decoration: none; padding-block: .4rem; }
+.brand { display: inline-flex; align-items: center; gap: .55rem; font-size: 1.15rem; font-weight: 700; color: var(--ink); text-decoration: none; padding-block: .4rem; }
 .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.25rem; }
 .nav-links a { padding-block: .45rem; }
 main { width: min(100%, 49rem); margin: auto; padding: 2.5rem 1.5rem 4rem; min-height: 65vh; }
@@ -37,6 +38,21 @@ li + li { margin-top: .4rem; }
 .eyebrow { margin-bottom: .6rem; }
 .lede { font-size: 1.1rem; color: var(--muted); }
 .page-intro { margin-bottom: 2rem; }
+.studio-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  border-radius: 1rem;
+  background: #29152e;
+  color: white;
+  border-bottom: .35rem solid var(--smurp-green);
+}
+.studio-intro h1 { color: var(--smurp-green); }
+.studio-intro .lede { color: #e6dce9; margin-bottom: 0; }
+.studio-intro img { width: clamp(7rem, 26vw, 13rem); height: auto; }
 .link-list { padding: 0; margin: 1.5rem 0; list-style: none; }
 .link-list li { border-bottom: 1px solid var(--line); padding: 1rem 0; }
 .link-list a { font-weight: 650; }
